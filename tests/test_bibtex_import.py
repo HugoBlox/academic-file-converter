@@ -14,6 +14,17 @@ def test_bibtex_import():
     cli.parse_args(["import", "--dry-run", "tests/data/article.bib", "content/publication/"])
 
 
+def test_unsupported_input_extension_exits_with_error(capsys):
+    import pytest
+
+    with pytest.raises(SystemExit) as exc_info:
+        cli.parse_args(["import", "notes.txt", "content/publication/"])
+    assert exc_info.value.code == 2
+    err = capsys.readouterr().err
+    assert "unsupported input file" in err
+    assert "notes.txt" in err
+
+
 def _process_bibtex(file, expected_count=1) -> "typing.List[GenerateMarkdown]":
     """
     Parse a BibTeX .bib file and return the parsed metadata
