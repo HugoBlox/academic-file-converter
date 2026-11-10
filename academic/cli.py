@@ -3,6 +3,7 @@
 import argparse
 import importlib.metadata
 import logging
+import os
 import sys
 from argparse import RawTextHelpFormatter
 
@@ -86,6 +87,14 @@ def parse_args(args):
                     overwrite=known_args.overwrite,
                     dry_run=known_args.dry_run,
                 )
+            else:
+                # Inputs without a file extension are left alone so that
+                # extensionless glob patterns (e.g. `content/*`) keep working.
+                _, ext = os.path.splitext(known_args.input)
+                if ext:
+                    parser.error(
+                        f"unsupported input file '{known_args.input}': expected a .bib or .ipynb file"
+                    )
 
 
 if __name__ == "__main__":
